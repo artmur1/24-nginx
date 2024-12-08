@@ -1,4 +1,2 @@
 FROM nginx:stable
 COPY index.html /usr/share/nginx/html
-RUN git clone https://github.com/artmur1/24-nginx
-COPY 24-nginx/nginx.conf /etc/nginx
