@@ -67,8 +67,8 @@ jobs:
             exit 1
           fi
 
-      - name: Replace image tag in deploy.yaml
-        if: env.DEPLOY == 'false'
+##      - name: Replace image tag in deployment.yaml
+##        if: env.DEPLOY == 'false'
        
         run: |
           sed -i "s|image: artmur18/diplom-nginx:.*|image: ${{ env.IMAGE_TAG }}|" ./deployment.yaml
