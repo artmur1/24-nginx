@@ -51,11 +51,38 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Configure Kubernetes CLI
-        uses: azure/k8s-set-context@v4
+
+      - name: Set up Kubernetes
+        uses: azure/setup-kubectl@v4
         with:
-          method: kubeconfig
-          kubeconfig: ${{ secrets.KUBECONFIG }}
-      - name: Deploy to Kubernetes with Helm
+          version: 'v1.31.0'
+
+      - name: Extract version from commit messages
         run: |
-          helm upgrade --install ${{ env.RELEASE_NAME }} ./nginx_ci --namespace ${{ env.NAMESPACE }} --set image.tag=${{ env.VERSION }}
+          VERSION=$(git log -1 --pretty=format:%B)
+          if [[ ! -z "$VERSION" ]]; then
+            echo "VERSION=$VERSION" >> $GITHUB_ENV
+          else
+            echo "No version found in the commit message"
+            exit 1
+          fi
+
+      - name: Replace image tag in deploy.yaml
+        if: env.DEPLOY == 'false'
+       
+        run: |
+          sed -i "s|image: artmur18/diplom-nginx:.*|image: ${{ env.IMAGE_TAG }}|" ./deployment.yaml
+        env:
+          IMAGE_TAG: artmur18/diplom-nginx:${{ env.VERSION }}
+      
+      - name: Create kubeconfig
+        run: |
+          mkdir -p $HOME/.kube/
+      - name: Authenticate to Kubernetes cluster
+        env:
+          KUBECONFIG: ${{ secrets.KUBECONFIG }}
+        run: |
+          echo "${KUBECONFIG}" > ${HOME}/.kube/config
+      - name: Apply Kubernetes manifests
+        run: |
+          kubectl apply -f ./deployment.yaml
