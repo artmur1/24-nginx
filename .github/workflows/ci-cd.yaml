@@ -1,4 +1,4 @@
-name: node_app
+name: murchin_a_s-diplom
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
 
 env:
   IMAGE_TAG: artmur18/diplom-nginx
-  RELEASE_NAME: nginx-release
+  RELEASE_NAME: murchin-nginx
   NAMESPACE: netology
 
 jobs:
