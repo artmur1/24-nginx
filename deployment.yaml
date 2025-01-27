@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
       - name: test-prilogenie-site
-        image: artmur18/diplom-nginx:v1.2.2
+        image: artmur18/diplom-nginx:v1.2.10
         ports:
         - containerPort: 80
 
